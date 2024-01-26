@@ -1,8 +1,11 @@
 def point(x,y):
-	return [x,y]
+	res = dict()
+	res["x"]=x
+	res["y"]=y
+	return res
 
 def getx(p):
-	return p[0]
+	return p["x"]
 
 def gety(p):
-	return p[1]
+	return p["y"]
