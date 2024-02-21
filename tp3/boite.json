@@ -1,4 +1,4 @@
-[
+{"boites": [
     {
         "name":"Boite 1",
         "capacity":3,
@@ -16,4 +16,4 @@
         "capacity":-1,
         "open":true
     }
-]
+]}

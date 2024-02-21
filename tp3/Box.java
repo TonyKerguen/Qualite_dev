@@ -1,5 +1,7 @@
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
-
+import com.google.gson.Gson;
 
 class Thing{
 
@@ -45,24 +47,28 @@ class Thing{
 public class Box {
 
     private ArrayList<Thing> contents = new ArrayList<>();
+    private String name;
     private boolean ouverte;
     private int capacity;
 
-    public Box(){
+    public Box(String name){
+        this.name = name;
         this.contents = new ArrayList<>();
         this.ouverte = false;
         this.capacity = -1;
         System.out.println("Box créée");
     }
 
-    public Box(int capacity){
+    public Box(String name, int capacity){
+        this.name = name;
         this.contents = new ArrayList<>();
         this.ouverte = false;
         this.capacity = capacity;
         System.out.println("Box créée");
     }
 
-    public Box(int capacity, boolean ouverte){
+    public Box(String name, int capacity, boolean ouverte){
+        this.name = name;
         this.contents = new ArrayList<>();
         this.ouverte = ouverte;
         this.capacity = capacity;
@@ -145,5 +151,13 @@ public class Box {
         }
         // listString.substring(0, listString.length() - 5);
         return "la boite contient: "+listString;
+    }
+
+    public static Box fromJSON() throws FileNotFoundException {
+        FileReader reader = new FileReader("./boite.json");
+        Gson gson = new Gson();
+        Box box = gson.fromJson(reader, Box.class);
+        return box;
+        
     }
 }
