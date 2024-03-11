@@ -1,10 +1,10 @@
 package fr.univ_orleans.iut45.mud;
 
 /**
-* main App
-*
-*/
-public class App
+ * main App
+ *
+ */
+public class App 
 {
     public static void main( String[] args )
     {
