@@ -53,7 +53,7 @@ class AppWeekEnd {
 
 		List<String> option = new ArrayList<>();
 		option.add("Menu principal");
-		option.add("Q: quitter");
+		option.add("Q: Quitter");
 		option.add("D: Menu dépenses");
 		option.add("P: Menu personnes");
 		option.add("T: Total dépenses");
@@ -73,20 +73,57 @@ class AppWeekEnd {
 				}
 				quitter = false;
 			}
+			else if(commande.equals("d")){
+				while (!quitter) {
+					menu_depense();
+				}
+				quitter = false;
+			}
+			else if(commande.equals("t")){
+				System.out.println("Somme dépensé ce week end : " + we.totalDepenses());
+			}
+			else if(commande.equals("m")){
+				System.out.println("Moyenne des dépenses par personne pour ce week end : " + we.depensesMoyenne());
+			}
 		    else {
 			System.out.println("Commande '" + commande_brute + "' invalide.");
 		    }
 		}
 	}
 
+	public void menu_depense() {
+		List<String> menuDepense = new ArrayList<>();
+		menuDepense.add("Menu Depenses");
+		menuDepense.add("L: Afficher la liste des dépenses");
+		menuDepense.add("Q: Quitter");
+
+		creationMenu(menuDepense);
+
+		String commande_brute_menu_depense = System.console().readLine();
+	    String commande_menu_depense = commande_brute_menu_depense.strip().toLowerCase();
+	    if(commande_menu_depense.equals("q")) {
+			quitter = true;
+		}
+		else if(commande_menu_depense.equals("l")) {
+			System.out.println("Liste des dépenses : " + we.getDepenses());
+		}
+		else {
+			System.out.println("Commande '" + commande_brute_menu_depense + "' invalide.");
+		}
+	}
+
 	public void menu_personne() {
 		List<String> menuPersonnes = new ArrayList<>();
 		menuPersonnes.add("Menu Personnes");
-		menuPersonnes.add("L: liste");
-		menuPersonnes.add("S: sélection");
-		menuPersonnes.add("Q: quitter");
+		menuPersonnes.add("L: Liste des personnes");
+		menuPersonnes.add("S: Sélectionné une personne");
+		menuPersonnes.add("T: Total dépense de la personne sélectionnée");
+		menuPersonnes.add("A: L'avoir de la personne sélectionnée");
+		menuPersonnes.add("+: Ajouter une personne au WE");
+		menuPersonnes.add("Q: Quitter");
 	
 		creationMenu(menuPersonnes);
+
 		String commande_brute_menu_personne = System.console().readLine();
 	    String commande_menu_personne = commande_brute_menu_personne.strip().toLowerCase();
 	    if(commande_menu_personne.equals("q")) {
@@ -97,14 +134,46 @@ class AppWeekEnd {
 		}
 		else if(commande_menu_personne.equals("s")) {
 			System.out.println("Sélectionner la personne numéro combien?");
-			int commande_brute_menu_personne_2 = Integer.parseInt(System.console().readLine());
-	    	if(!(commande_brute_menu_personne_2 >= we.getAmis().size())) {
-				System.out.println("Vous avez sélectionné "+we.getAmis().get(commande_brute_menu_personne_2));
+			try {
+				int commande_brute_menu_personne_2 = Integer.parseInt(System.console().readLine());
+				if(!(commande_brute_menu_personne_2 >= we.getAmis().size())) {
+					personne_selectionnee = we.getAmis().get(commande_brute_menu_personne_2);
+					System.out.println("Vous avez sélectionné "+we.getAmis().get(commande_brute_menu_personne_2));
+				}
+				else {
+					System.out.println("La liste ne contient pas autant de membre !!");
+				}
+			} catch (java.lang.NumberFormatException e) {
+				System.out.println("Il faut que tu donne un numero zzzz");
+			}
+		}
+		else if(commande_menu_personne.equals("t")) {
+			try {
+				System.out.println(we.totalDepensesPersonne(personne_selectionnee));
+			} catch (NullPointerException e) {
+				System.out.println("Il faut selectionner une personne avant !");
+			}
+		}
+		else if(commande_menu_personne.equals("a")) {
+			try {
+				System.out.println(we.avoirPersonne(personne_selectionnee));
+			} catch (NullPointerException e) {
+				System.out.println("Il faut selectionner une personne avant !");
+			}
+		}
+		else if(commande_menu_personne.equals("+")) {
+			System.out.println("Quel est le nom de la nouvelle personne ?");
+			String nom = System.console().readLine();
+			System.out.println("Quel est le prenom de la nouvelle personne ?");
+			String prenom = System.console().readLine();
+			Personne personneAAjouter = new Personne(nom, prenom);
+			if(!we.getAmis().contains(personneAAjouter)){
+				we.ajouterPersonne(personneAAjouter);
+				System.out.println("La personne a bien été ajouter !");
 			}
 			else {
-				System.out.println("La liste ne contient pas autant de membre !!");
+				System.out.println("La personne n'a pas été ajouter !");
 			}
-
 		}
 		else {
 			System.out.println("Commande '" + commande_brute_menu_personne + "' invalide.");
@@ -122,7 +191,7 @@ class AppWeekEnd {
 		System.out.println("╭─"+"─".repeat(plusGrandeChaine)+"─╮");
 		System.out.println("│ "+l.get(0)+" ".repeat(plusGrandeChaine-l.get(0).length())+" │");
 		System.out.println("├─"+"─".repeat(plusGrandeChaine)+"─┤");
-		for(int i = 0; i <l.size(); i++){
+		for(int i = 1; i <l.size(); i++){
 			System.out.println("│ "+l.get(i)+" ".repeat(plusGrandeChaine-l.get(i).length())+" │");
 		}
 		System.out.println("╰─"+"─".repeat(plusGrandeChaine)+"─╯");
@@ -151,6 +220,18 @@ class Personne{
     public String toString() {return this.prenom + " " + this.nom + " ";  }
     public String getNom() {return this.nom;}
     public String getPrenom() {return this.prenom;}
+
+	@Override
+	public boolean equals(Object o){
+		if(o == this) {
+			return true;
+		}
+		if(!(o instanceof Personne)) {
+			return false;
+		}
+		Personne p = (Personne) o;
+		return p.getNom().equals(this.getNom()) && p.getPrenom().equals(this.getPrenom());
+	}
 }
 class Depense{
     private Personne pers;
@@ -162,6 +243,11 @@ class Depense{
     public Personne getPersonne() {return this.pers;}
     public double getMontant() {return this.montant;}
     public String getProduit() {return this.produit;}
+
+	@Override
+	public String toString() {
+		return this.getProduit() + " : " + this.getMontant() + "€";
+	}
 }
 
 class WeekEnd{
